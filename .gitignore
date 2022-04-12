@@ -1,0 +1,8 @@
+**/.*
+!**/.gitignore
+**/venv/
+**/__DS_Store/
+**/__pycache__/
+**/instance/
+**/.webassets-cache
+
