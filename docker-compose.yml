@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   web:
-    build: .
+    build: ./src
     environment:
       WAIT_HOSTS: mongo:27017
     ports:
