@@ -10,22 +10,23 @@ app = Flask(__name__)
 def home():
     return '<p>Secret Sauces</p>'
 
-@app.route('/login')
+@app.route('/login', methods = ["POST"])
 def login():
     # parse data from request
     username, password = request.form['username'], request.form['password']
 
     user = users.find_one({'name': username})
-    if bcrypt.checkpw(password, user.password):
-        token = secrets.token_bytes(20)
-        user['token'] = user.get('token', []).append(token)
-        users.replace_one({'name': username}, user)
-        resp = make_response("success")
-        resp.set_cookie("token", token)
-        return resp
+    if user == None or not bcrypt.checkpw(password.encode('utf8'), user['password']):
+        # not correct login
+        return "login error", 403
+
+    token = secrets.token_bytes(20)
+    users.update_one({'name': username}, { "$push": { "token": token } })
+    resp = make_response("success")
+    resp.set_cookie("token", token)
+    return resp
     
-    # not correct login
-    return "login error", 403
+
     
 
 @app.route('/signup', methods = ["POST"])
@@ -38,7 +39,8 @@ def signup():
         return "user exists", 409
 
     # insert new user
-    users.insert_one({'name': username, 'password': bcrypt.hashpw(password, bcrypt.gensalt())})
+    hashed = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
+    users.insert_one({'name': username, 'password': hashed })
     return "success", 200
 
 @app.route('/setup_auth')
