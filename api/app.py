@@ -1,4 +1,3 @@
-from crypt import methods
 import secrets
 from flask import Flask, make_response, request
 from database import users
@@ -16,8 +15,9 @@ def login():
     username, password = request.form['username'], request.form['password']
 
     user = users.find_one({'name': username})
+
+    # if user doesn't exist or password incorrect
     if user == None or not bcrypt.checkpw(password.encode('utf8'), user['password']):
-        # not correct login
         return "login error", 403
 
     token = secrets.token_bytes(20)
