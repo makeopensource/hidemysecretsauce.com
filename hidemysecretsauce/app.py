@@ -1,6 +1,6 @@
 import secrets
-from flask import Flask, make_response, request, \
-    render_template, url_for
+from flask import Flask, request, \
+    render_template, url_for, redirect
 from database import users
 import bcrypt
 
@@ -8,8 +8,11 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    static_file = url_for('static', filename='css/style.css')
-    return render_template('login.html', static_file = static_file)
+    token = request.cookies.get('token', None)
+    if token:
+        return 'Logged in'
+    else:
+        return redirect('/login')
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
@@ -30,9 +33,9 @@ def login():
 
         token = secrets.token_bytes(20)
         users.update_one({'name': username}, { '$push': { 'token': token } })
-        resp = make_response('success')
-        resp.set_cookie('token', token)
-        return resp
+        response = redirect('/')
+        response.set_cookie('token', token)
+        return response
 
 
 @app.route('/signup', methods = ['GET', 'POST'])
@@ -52,11 +55,18 @@ def signup():
         # insert new user
         hashed = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
         users.insert_one({'name': username, 'password': hashed })
-        return 'success', 200
+        return redirect('/login') 
 
-@app.route('/setup_auth')
-def setup_auth():
-    pass
-
-
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    if request.method == 'GET':
+        return 'logged out'
+    else:
+        token = request.cookies.get('token', None)
+        if token:
+            response = redirect('/redirect')
+            
+            # doesn't successfully clear cookie
+            response.set_cookie('token', '', expires=0)
+            return response
 

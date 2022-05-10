@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="{{ static_file }}"/>
 </head>
 <body>
-    <p>Hide My Secret Sauce</p>
+    <p>Login</p>
     <div class="login">
         <form action="/login", method="POST">
             <label for="username">Username</label>
@@ -16,6 +16,8 @@
             <input type="password" id="password" name="password" maxlength="4">
             <br><br>
             <input type="submit" id="login" value="Login">
+
+            <a href="/signup">Sign Up</a>
         </form>
     </div>
 </body>
