@@ -1,0 +1,18 @@
+{% extends "alt_nav.html" %}
+{% block content %}
+<p>{{ form_title }}</p>
+<div class="form-layout">
+    <form action="{{ action }}", method="post">
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" name="username">
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" maxlength="4">
+            <div id="passwordHelp" class="form-text">Please don't enter any real passwords</div>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form> 
+</div>
+{% endblock %}

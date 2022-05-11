@@ -7,17 +7,40 @@ p {
 }
 
 body {
-    background-color: orange;
+    /* background-color: orange; */
 }
 
 form {
     display: flex;
     flex-direction: column;
+    max-width: 500px;
 }
 
-.login {
+textarea {
+    resize: none;
+}
+
+.form-layout {
     margin: auto;
     justify-content: center;
     display: flex;
+}
 
+.sauce {
+    border: 1px solid #ced4da !important;
+    padding: 15px 20px;
+    border-radius: 10px !important;
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto 20px auto;
+}
+
+.sauce .title {
+    display: flex;
+    justify-content: space-between;
+}
+
+.remove-sauce:hover {
+    color: darkred;
+    cursor: pointer;
 }
