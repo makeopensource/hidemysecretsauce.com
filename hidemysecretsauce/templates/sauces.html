@@ -1,7 +1,7 @@
 {% extends "nav.html" %}
 {% block content %}
 
-<p>My [Secret] Sauces</p>
+<h1>My [Secret] Sauces</h1>
 <div class="form-layout mb-5">
     <form action="/add_sauce", method="POST">
         <label for="sauce" class="form-label">Sauce Name</label>
@@ -9,6 +9,7 @@
         <br>
         <label for="ingredients" class="form-label">Ingredients</label>
         <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="ingredients"></textarea>
+        <div class="form-text">Write a comma ',' separated list</div>
         <br>
         <input type="submit" id="login" class="form-control" value="Add Secret Sauce">
     </form> 
@@ -25,5 +26,5 @@
     </div>
     {% endfor %}
 </div>
-<script src="{{ js }}"></script>
+<script src="{{ url_for('static', filename='js/sauce.js') }}"></script>
 {% endblock %}
