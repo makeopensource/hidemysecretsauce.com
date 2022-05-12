@@ -5,7 +5,7 @@ from database import users, sauces
 import bcrypt
 import re
 from bson.objectid import ObjectId
-
+import hashlib
 
 
 
@@ -57,8 +57,10 @@ def login_auth(username, password):
     user = users.find_one({'username': username})
 
     # if user doesn't exist or password incorrect
-    if user == None or not bcrypt.checkpw(password.encode('utf8'), user['password']):
-        return 'login error', 403
+    hashed = hashlib.sha256(password.encode()).hexdigest()
+    if user == None or hashed != user['password']:
+
+        return f'{hashed} != {user["password"]}', 403
 
     token = secrets.token_bytes(20)
     users.update_one({'username': username}, { '$push': { 'token': str(token) } })
@@ -101,7 +103,7 @@ def signup():
             return 'user exists'
 
         # insert new user
-        hashed = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
+        hashed = hashlib.sha256(password.encode()).hexdigest()
         users.insert_one({'username': username, 'password': hashed })
         return login_auth(username, password)
 
