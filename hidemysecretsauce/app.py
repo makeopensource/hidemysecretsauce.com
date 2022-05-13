@@ -1,3 +1,4 @@
+from views.homepage import homepage
 from views.two_factor import two_factor 
 from views.login import login
 from views.signup import signup
@@ -6,6 +7,7 @@ from flask import Flask
 
 
 app = Flask(__name__)
+app.register_blueprint(homepage)
 app.register_blueprint(login)
 app.register_blueprint(signup)
 app.register_blueprint(two_factor)
@@ -13,3 +15,5 @@ app.register_blueprint(sauce)
 SECURE = False
 
 
+if __name__ == '__main__':
+    app.run()
