@@ -16,7 +16,7 @@ function remove_sauce(sauce, sauce_button) {
 }
 
 let sauces = document.getElementsByClassName("sauce");
-for (sauce of sauces) {
+for (let sauce of sauces) {
     let sauce_button = sauce.getElementsByClassName("remove-sauce")[0];
     sauce_button.addEventListener("click", () => remove_sauce(sauce, sauce_button));
 }
