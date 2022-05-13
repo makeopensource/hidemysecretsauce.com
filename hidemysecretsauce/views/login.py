@@ -1,6 +1,7 @@
 import secrets
 from flask import Blueprint, request, render_template, redirect
 from database import *
+import pyotp
 
 
 
@@ -15,18 +16,23 @@ def login_method():
 
     else:
         # parse data from request
-        username, password = request.form['username'], request.form['password']
+        username, password, code = request.form['username'], request.form['password'], request.form['code']
 
         # if user doesn't exist or password incorrect
         if not user_exists(username) or not validate_password(username, password):
             return 'login error', 403
 
+        user = get_user_by_username(username)
+        if user and user.get('valid_2fa'):
+            secret_key = user['secret_key']
+            totp = pyotp.TOTP(secret_key)
+            is_correct = totp.verify(code, valid_window=2)
+            if not is_correct:
+                return 'Invalid 2fa code', 403
+        
         token = secrets.token_bytes(20)
         add_refresh_token(username, token)
         response = redirect('/')
-
-        if SECURE:
-            response = redirect('/check_2fa')
         response.set_cookie('token', str(token))
         return response
 

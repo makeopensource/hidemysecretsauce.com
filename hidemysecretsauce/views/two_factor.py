@@ -1,38 +1,11 @@
 from flask import Blueprint, request, render_template, redirect
-from database import get_user_by_token, store_secret_key
+from database import get_user_by_token, store_secret_key, users
 import pyotp
 import qrcode
 import base64
 from io import BytesIO
 
 two_factor = Blueprint('two_factor', __name__)
-
-@two_factor.route('/check_2fa', methods=['GET', 'POST'])
-def check_2fa():
-    if request.method == 'GET' and 'token' in request.cookies:
-        token = request.cookies['token']
-        user = get_user_by_token(token)
-        if user is not None and 'secret_key' in user:
-            return render_template('/check_2fa.html')
-        else:
-            return 'Invalid request', 403
-
-    elif request.method == 'POST':
-        secret_key = None
-        user = get_user_by_token(request.cookies['token'])
-        if user is not None and 'secret_key' in user:
-            secret_key = user['secret_key']
-
-        if secret_key is None:
-            return 'Invalid request', 403
-
-        code = request.form['code']
-        totp = pyotp.TOTP(secret_key)
-        is_correct = totp.verify(code)
-        if is_correct:
-            return redirect('/')
-
-    return 'Invalid request', 403 
 
 
 @two_factor.route('/setup_2fa', methods=['GET', 'POST'])
@@ -48,6 +21,8 @@ def setup_2fa():
             name=username, 
             issuer_name='Hide My Secret Sauce'
         )
+
+        users.update_one({'username': username}, { '$set': { 'valid_2fa': False } }) 
 
         qr_code = qrcode.make(qr_code_data)
         buffered = BytesIO()
@@ -67,6 +42,8 @@ def setup_2fa():
         is_correct = totp.verify(code, valid_window=2)
 
         if is_correct:
+            users.update_one({'token': request.cookies['token']}, { '$set': { 'valid_2fa': True } }) 
+
             return redirect('/')
 
         return 'incorrect key'
