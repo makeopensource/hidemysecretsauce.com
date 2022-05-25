@@ -1,0 +1,17 @@
+{% extends "alt_nav.html" %}
+{% block content %}
+<h2>Sign Up</h2>
+<div class="form-layout">
+    <img src="data:image/jpeg;base64,{{ data }}" style="width: 200px; height: 200px;"/>
+
+    <form action='/setup_2fa', method="post">
+        <div class="mb-3">
+            <label for="code" class="form-label" maxlength="6">2fa code</label>
+            <input type="text" class="form-control" id="code" name="code">
+            <div id="passwordHelp" class="form-text">Enter the 2fa code</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mb-3">Submit</button>
+    </form>
+</div>
+{% endblock %}
