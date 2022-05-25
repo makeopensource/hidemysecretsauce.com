@@ -8,13 +8,13 @@ import hashlib
 # takes username and charset as command line arguments.
 
 def pwn_pwd(charset, log=False):
+    i = 0
     for n in range (1, 5):
         for guess in itertools.product(charset, repeat=n):
             guess = "".join(guess)
             hashed_guess = hashlib.sha256(guess.encode()).hexdigest()
-            if log:
-                print(guess)
-            
+            i += 1   
+            print(f'Guessing {guess}')
             if hashed_guess == userhash:
                 print(f'Password: {guess}')
                 exit()
